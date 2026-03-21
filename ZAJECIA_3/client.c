@@ -230,7 +230,58 @@ int test27(unsigned char * buf){
     memcpy(buf, text, sizeof(text));
     return sizeof(text) - 1;
 }
-int test(int sock, int (*do_test)(unsigned char *), struct sockaddr * addr){
+
+int test28(unsigned char * buf){
+    printf("\n---TEST 28 (only \\n):---\n");
+    buf[0] = '\n';
+    return 1;
+}
+
+int test29(unsigned char * buf){
+    printf("\n---TEST 29 (only \\n\\r - bad seq):---\n");
+    buf[0] = '\n';
+    buf[1] = '\r';
+    return 2;
+}
+
+int test30(unsigned char * buf){
+    printf("\n---TEST 30 (only \\r\\n):---\n");
+    buf[0] = '\r';
+    buf[1] = '\n';
+    return 2;
+}
+
+int test31(unsigned char * buf){
+    printf("\n---TEST 31 (error with \\n):---\n");
+    unsigned char text[] = {"Ala ma/ kota\n"};
+    memcpy(buf, text, sizeof(text));
+    return sizeof(text) - 1;
+}
+
+int test32(unsigned char * buf){
+    printf("\n---TEST 32 (error with \\r\\n):---\n");
+    unsigned char text[] = {"Ala ma/ kota\r\n"};
+    memcpy(buf, text, sizeof(text));
+    return sizeof(text) - 1;
+}
+
+int test33(unsigned char * buf){
+    printf("\n---TEST 33 (error with \\r\\n len == 3):---\n");
+    unsigned char text[] = {"*\r\n"};
+    memcpy(buf, text, sizeof(text));
+    return sizeof(text) - 1;
+}
+
+
+int test34(unsigned char * buf){
+    printf("\n---TEST 34 (error with \\n len == 2):---\n");
+    unsigned char text[] = {"*\n"};
+    memcpy(buf, text, sizeof(text));
+    return sizeof(text) - 1;
+}
+
+
+bool test(int sock, int (*do_test)(unsigned char *), struct sockaddr * addr,int exp_len, unsigned char * exp_result){
     unsigned char buf[2000];
     int size = do_test(buf);
 
@@ -258,6 +309,21 @@ int test(int sock, int (*do_test)(unsigned char *), struct sockaddr * addr){
     }
     printf("\n");
 
+    if (exp_len != -1){
+        if (exp_len != cnt){
+            printf("!!!!!!!! LEN ERROR !!!!!!!!!\n");
+            return false;
+        }
+        else{
+            if(memcmp(exp_result, buf, exp_len)  != 0){
+                printf("!!!!!!!! CMP ERROR !!!!!!!!!\n");
+                return false;
+            }
+        }
+    }
+
+    return true;
+
 }
 
 int main(int argc, char const *argv[])
@@ -284,41 +350,48 @@ int main(int argc, char const *argv[])
 
 
 
-    test(sock, test1, (struct sockaddr *) &addr);
-    test(sock, test2, (struct sockaddr *) &addr);
-    test(sock, test3, (struct sockaddr *) &addr);
-    test(sock, test4, (struct sockaddr *) &addr);
-    test(sock, test5, (struct sockaddr *) &addr);
-    test(sock, test6, (struct sockaddr *) &addr);
-    test(sock, test7, (struct sockaddr *) &addr);
-    test(sock, test8, (struct sockaddr *) &addr);
-    test(sock, test9, (struct sockaddr *) &addr);
-    test(sock, test10, (struct sockaddr *) &addr);
-    test(sock, test11, (struct sockaddr *) &addr);
+    test(sock, test1, (struct sockaddr *) &addr , 3, "1/3");
+    test(sock, test2, (struct sockaddr *) &addr, 5, "ERROR");
+    test(sock, test3, (struct sockaddr *) &addr, 3, "0/0");
+    test(sock, test4, (struct sockaddr *) &addr, 5, "ERROR");
+    test(sock, test5, (struct sockaddr *) &addr, 3, "1/1");
+    test(sock, test6, (struct sockaddr *) &addr, 7, "512/512");
+    test(sock, test7, (struct sockaddr *) &addr, 5, "ERROR");
+    test(sock, test8, (struct sockaddr *) &addr, 5, "ERROR");
+    test(sock, test9, (struct sockaddr *) &addr, 5, "ERROR");
+    test(sock, test10, (struct sockaddr *) &addr, 5, "ERROR");
+    test(sock, test11, (struct sockaddr *) &addr, 5, "ERROR");
 
-    test(sock, test12, (struct sockaddr *) &addr);
-    test(sock, test13, (struct sockaddr *) &addr);
-    test(sock, test14, (struct sockaddr *) &addr);
-    test(sock, test15, (struct sockaddr *) &addr);
-    test(sock, test16, (struct sockaddr *) &addr);
-    test(sock, test17, (struct sockaddr *) &addr);
-    test(sock, test18, (struct sockaddr *) &addr);
+    test(sock, test12, (struct sockaddr *) &addr, 5, "ERROR");
+    test(sock, test13, (struct sockaddr *) &addr, 4, "1/3\n");
+    test(sock, test14, (struct sockaddr *) &addr, 5, "1/3\r\n");
+    test(sock, test15, (struct sockaddr *) &addr, 5, "ERROR");
+    test(sock, test16, (struct sockaddr *) &addr, 4, "1/1\n");
+    test(sock, test17, (struct sockaddr *) &addr, 5, "1/1\r\n");
+    test(sock, test18, (struct sockaddr *) &addr, 9, "511/511\r\n");
 
-    test(sock, test19, (struct sockaddr *) &addr);
-    test(sock, test20, (struct sockaddr *) &addr);
-    test(sock, test21, (struct sockaddr *) &addr);
-    test(sock, test22, (struct sockaddr *) &addr);
+    test(sock, test19, (struct sockaddr *) &addr, 5, "ERROR");
+    test(sock, test20, (struct sockaddr *) &addr, 5, "ERROR");
+    test(sock, test21, (struct sockaddr *) &addr, 5, "ERROR");
+    test(sock, test22, (struct sockaddr *) &addr, 5, "ERROR");
 
-    test(sock, test23, (struct sockaddr *) &addr);
-    test(sock, test24, (struct sockaddr *) &addr);
+    test(sock, test23, (struct sockaddr *) &addr, 3, "3/5");
+    test(sock, test24, (struct sockaddr *) &addr, 5, "ERROR");
 
-    test(sock, test25, (struct sockaddr *) &addr);
-    test(sock, test26, (struct sockaddr *) &addr);
-    test(sock, test27, (struct sockaddr *) &addr);
+    test(sock, test25, (struct sockaddr *) &addr, 5, "ERROR");
+    test(sock, test26, (struct sockaddr *) &addr, 5, "ERROR");
+    test(sock, test27, (struct sockaddr *) &addr, 5, "ERROR");
 
+    test(sock, test28, (struct sockaddr *) &addr, 4, "0/0\n");
+    test(sock, test29, (struct sockaddr *) &addr, 5, "ERROR");
+    test(sock, test30, (struct sockaddr *) &addr, 5, "0/0\r\n");
 
+    test(sock, test31, (struct sockaddr *) &addr, 6, "ERROR\n");
+    test(sock, test32, (struct sockaddr *) &addr, 7, "ERROR\r\n");
 
-   
+    test(sock, test33, (struct sockaddr *) &addr, 7, "ERROR\r\n");
+    test(sock, test34, (struct sockaddr *) &addr, 6, "ERROR\n");
+
 
     rc = close(sock);
 

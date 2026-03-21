@@ -9,8 +9,8 @@
 
 /*
 Zalozenia przyjete:
-- jesli do serwera zostanie przeslane zapytanie zakonczone \n lub \r\n, serwer rowniez zwroci pozytywna odpowiedz
-    zakonczona \n lub \r\n (natomiast w przypadku odpowiedzi negatywnej zwrocone zostanie ERROR bez \n, \r\n)
+- jesli do serwera zostanie przeslane zapytanie zakonczone \n lub \r\n, serwer rowniez zwroci odpowiedz
+    zakonczona \n lub \r\n
 - klient nie przesyla zapytan zakonczonych '\0'
 - dla kazdego datagramu zawierajacego wiecej niz 1024 bajty zostanie zwrocony ERROR
 */
@@ -21,20 +21,20 @@ Stany:
 0 - stan poczatkowy
 1 - stan tworzenia slowa (przyjecie litery)
 2 - stan przyjecia spacji
-3 - stan inicjacji terminacji
+3 - stan inicjacji terminacji (przyjecie \r)
 4 - ERROR
 5 - stan akceptacji
 
 Przyjmowane symbole:
 0 - litera (np. 'a')
 1 - spacja
-2 - \n
-3 - \r
+2 - \n (tylko jako ostatnie)
+3 - \r (tylko jako przedostatnie)
 4 - \0
 5 - niedozwolone wejscie (np. '*')
 */
 
-//funkcja przejscia
+//funkcja przejscia 
 int get_state(unsigned char* symbol, int old_state, int states [][6], int i, int len){
     if ((*symbol >= 65 && *symbol <= 90) || (*symbol >= 97 && *symbol <= 122)){
         return states[old_state][0];
@@ -161,7 +161,16 @@ int main(int argc, char const *argv[])
                 }
 
                 if (state == 4){
-                    cnt = sendto(sock, "ERROR", 5, 0, (struct sockaddr *) &clnt_addr, clnt_addr_len);
+                    unsigned char error_msg[7] = {"ERROR"};
+                    int error_len = 5;
+                    if (cnt > 2 && buf[cnt - 2] == '\r' && buf[cnt - 1] == '\n'){
+                        error_len += 2;
+                        memcpy(error_msg + 5, "\r\n", 2);
+                    } else if (cnt > 1 && buf[cnt - 1] == '\n'){
+                        error_len += 1;
+                        memcpy(error_msg + 5, "\n", 2);
+                    }
+                    cnt = sendto(sock, error_msg, error_len, 0, (struct sockaddr *) &clnt_addr, clnt_addr_len);
                     if (cnt == -1){
                         perror("recevefrom");
                         return -1;
