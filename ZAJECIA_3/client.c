@@ -281,6 +281,27 @@ int test34(unsigned char * buf){
 }
 
 
+int test35(unsigned char * buf){
+    printf("\n---TEST 35 (only space):---\n");
+    unsigned char text[] = {" "};
+    memcpy(buf, text, sizeof(text));
+    return sizeof(text) - 1;
+}
+
+int test36(unsigned char * buf){
+    printf("\n---TEST 36 (only space \\n):---\n");
+    unsigned char text[] = {" \n"};
+    memcpy(buf, text, sizeof(text));
+    return sizeof(text) - 1;
+}
+
+int test37(unsigned char * buf){
+    printf("\n---TEST 37 (only space \\r\\n):---\n");
+    unsigned char text[] = {" \r\n"};
+    memcpy(buf, text, sizeof(text));
+    return sizeof(text) - 1;
+}
+
 bool test(int sock, int (*do_test)(unsigned char *), struct sockaddr * addr,int exp_len, unsigned char * exp_result){
     unsigned char buf[2000];
     int size = do_test(buf);
@@ -391,6 +412,12 @@ int main(int argc, char const *argv[])
 
     test(sock, test33, (struct sockaddr *) &addr, 7, "ERROR\r\n");
     test(sock, test34, (struct sockaddr *) &addr, 6, "ERROR\n");
+
+    test(sock, test35, (struct sockaddr *) &addr, 5, "ERROR");
+    test(sock, test36, (struct sockaddr *) &addr, 6, "ERROR\n");
+
+    test(sock, test37, (struct sockaddr *) &addr, 7, "ERROR\r\n");
+
 
 
     rc = close(sock);

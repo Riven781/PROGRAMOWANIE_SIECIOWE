@@ -7,6 +7,8 @@
 #include <string.h>
 #include <unistd.h>
 
+//  gcc server.c -o server  -std=c99 -pedantic -Wall
+
 /*
 Zalozenia przyjete:
 - jesli do serwera zostanie przeslane zapytanie zakonczone \n lub \r\n, serwer rowniez zwroci odpowiedz
@@ -117,7 +119,7 @@ int main(int argc, char const *argv[])
 
     unsigned char buf[1025];
     unsigned char word[1025];
-    unsigned char result[4 * 2 + 3]; //max to 1024/1024\r\n
+    char result[4 * 2 + 3]; //max to 1024/1024\r\n
     
 
     while (keep_on_handling_clients)
