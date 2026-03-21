@@ -1,0 +1,34 @@
+Komunikacja pomiędzy klientem a serwerem odbywa się przy pomocy datagramów. Klient wysyła datagram zawierający wyrazy do sprawdzenia. 
+Serwer odpowiada datagramem zawierającym albo ułamek z liczbą otrzymanych wyrazów w mianowniku i liczbą wyrazów-palindromów w liczniku, albo komunikat o błędzie.
+
+Zawartość datagramów interpretujemy jako tekst w ASCII. Datagramy wysyłane przez klienta mogą zawierać litery i spacje. 
+Datagramy wysyłane przez serwer mogą zawierać albo cyfry i znak /, albo pięć liter składających się na słowo „ERROR”. 
+Żadne inne znaki nie są dozwolone (ale patrz następny akapit).
+
+Aby ułatwić ręczne testowanie serwera przy pomocy ncat, serwer może również akceptować datagramy mające na końcu 
+dodatkowy znak \n (czyli bajt o wartości 10) albo dwa znaki \r\n (bajty 13, 10). Serwer może wtedy, ale nie musi, dodać \r\n do zwracanej odpowiedzi.
+
+Napisz serwer UDP/IPv4 nasłuchujący na porcie nr 2020 i implementujący powyższy protokół.
+
+---ZALECENIA---
+Serwer musi weryfikować odebrane dane i zwracać komunikat o błędzie jeśli są one nieprawidłowe w sensie zgodności ze specyfikacją protokołu.
+
+Czy między wyrazami może być więcej niż jedna spacja?
+
+    Nie. Nie pozwalamy na używanie ciągu dwóch lub więcej spacji jako separatora.
+
+    Spacje przed pierwszym wyrazem bądź za ostatnim też są zabronione.
+Czy utożsamiamy wielkie i małe litery?
+
+    Tak. Jeśli klient jako jeden z wyrazów prześle „Ala”, to serwer powinien ten wyraz uznać za palindrom.
+Czy jednoliterowe wyrazy są palindromami?
+
+    Tak.
+Jak serwer odpowiada na puste zapytania? Zwraca „0/0” czy „ERROR”?
+
+    „0/0”. Zapytania zawierające pusty zbiór wyrazów uznajemy za poprawne.
+Czy jest jakiś limit na długość zapytań-datagramów wysyłanych przez klienta?
+
+    Na poziomie naszego protokołu aplikacyjnego klientowi nie stawiamy żadnych wymagań. Jedynym ograniczeniem rozmiaru wysyłanych przez niego zapytań jest więc limit narzucany przez używany protokół transportowy. W szczególności, UDP/IPv4 ma limit równy 65507 bajtom (ciut poniżej 64 KiB).
+
+    Serwer musi być w stanie przetwarzać zapytania mające 1024 bajty lub mniej, na większe może odpowiadać „ERROR”. Zalecane jest, aby podczas implementowania serwera przyjąć wyższe ograniczenie, jeśli jest to możliwe. Najlepiej, gdy serwer może przetwarzać zapytania maksymalnego rozmiaru dopuszczanego przez używany protokół transportowy.
