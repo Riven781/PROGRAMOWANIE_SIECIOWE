@@ -302,6 +302,52 @@ int test37(unsigned char * buf){
     return sizeof(text) - 1;
 }
 
+int test38(unsigned char * buf){
+    printf("\n---TEST 38:--- (palidromes test)\n");
+    unsigned char text[] = {"O KO OKO LOL kajak kajaki pokaz zaz ll"};
+    memcpy(buf, text, sizeof(text));
+    return sizeof(text) - 1;
+}
+int test39(unsigned char * buf){
+    printf("\n---TEST 39:---\n");
+    unsigned char text[] = {"O KO OKO LOL kajak kajaki pokaz zaz ll\n"};
+    memcpy(buf, text, sizeof(text));
+    return sizeof(text) - 1;
+}
+int test40(unsigned char * buf){
+    printf("\n---TEST 40:---(space before \\n)\n");
+    unsigned char text[] = {"O KO OKO LOL kajak kajaki pokaz zaz ll \n"};
+    memcpy(buf, text, sizeof(text));
+    return sizeof(text) - 1;
+}
+
+int test41(unsigned char * buf){
+    printf("\n---TEST 41:---(space before \\r\\n)\n");
+    unsigned char text[] = {"O KO OKO LOL kajak kajaki pokaz zaz ll \r\n"};
+    memcpy(buf, text, sizeof(text));
+    return sizeof(text) - 1;
+}
+
+int test42(unsigned char * buf){
+    printf("\n---TEST 42:---(0 palidormes)\n");
+    unsigned char text[] = {"koala pilka zero nie ma tu palidromow"};
+    memcpy(buf, text, sizeof(text));
+    return sizeof(text) - 1;
+}
+
+int test43(unsigned char * buf){
+    printf("\n---TEST 43:---(0 palidormes + \\n)\n");
+    unsigned char text[] = {"koala pilka zero nie ma tu palidromow\n"};
+    memcpy(buf, text, sizeof(text));
+    return sizeof(text) - 1;
+}
+
+int test44(unsigned char * buf){
+    printf("\n---TEST 44:---(0 palidormes + \\r\\n)\n");
+    unsigned char text[] = {"koala pilka zero nie ma tu palidromow\r\n"};
+    memcpy(buf, text, sizeof(text));
+    return sizeof(text) - 1;
+}
 bool test(int sock, int (*do_test)(unsigned char *), struct sockaddr * addr,int exp_len, unsigned char * exp_result){
     unsigned char buf[2000];
     int size = do_test(buf);
@@ -417,7 +463,16 @@ int main(int argc, char const *argv[])
     test(sock, test36, (struct sockaddr *) &addr, 6, "ERROR\n");
 
     test(sock, test37, (struct sockaddr *) &addr, 7, "ERROR\r\n");
+    test(sock, test38, (struct sockaddr *) &addr, 3, "6/9");
 
+    test(sock, test39, (struct sockaddr *) &addr, 4, "6/9\n");
+    test(sock, test40, (struct sockaddr *) &addr, 6, "ERROR\n");
+    test(sock, test41, (struct sockaddr *) &addr, 7, "ERROR\r\n");
+    test(sock, test42, (struct sockaddr *) &addr, 3, "0/7");
+
+
+    test(sock, test43, (struct sockaddr *) &addr, 4, "0/7\n");
+    test(sock, test44, (struct sockaddr *) &addr, 5, "0/7\r\n");
 
 
     rc = close(sock);
