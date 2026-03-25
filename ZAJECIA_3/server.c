@@ -119,7 +119,7 @@ int main(int argc, char const *argv[])
 
     unsigned char buf[1025];
     unsigned char word[1025];
-    char result[4 * 2 + 3]; //max to 1024/1024\r\n
+    char result[10]; //max to 511/511\r\n
     
 
     while (keep_on_handling_clients)
@@ -169,8 +169,8 @@ int main(int argc, char const *argv[])
                         error_len += 2;
                         memcpy(error_msg + 5, "\r\n", 2);
                     } else if (cnt > 1 && buf[cnt - 1] == '\n'){
-                        error_len += 1;
-                        memcpy(error_msg + 5, "\n", 2);
+                        error_len += 2;
+                        memcpy(error_msg + 5, "\r\n", 2);
                     }
                     cnt = sendto(sock, error_msg, error_len, 0, (struct sockaddr *) &clnt_addr, clnt_addr_len);
                     if (cnt == -1){
@@ -207,14 +207,11 @@ int main(int argc, char const *argv[])
                     len += sprintf(result + len, "%d", words_num);
                     //zwraca len nie biorac pod uwage '/0'
 
-                    if (cr_symbol){
+                    if (cr_symbol || buf[i] == '\n'){
                         memcpy(result + len, "\r\n", 2);
                         len += 2;
                     }
-                    else if (buf[i] == '\n'){
-                        result[len] = '\n';
-                        ++len;
-                    }
+                    
                     
                     cnt = sendto(sock, result, len, 0, (struct sockaddr *) &clnt_addr, clnt_addr_len);
                     if (cnt == -1){

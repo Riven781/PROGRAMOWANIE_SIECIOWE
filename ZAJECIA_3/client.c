@@ -430,10 +430,10 @@ int main(int argc, char const *argv[])
     test(sock, test11, (struct sockaddr *) &addr, 5, "ERROR");
 
     test(sock, test12, (struct sockaddr *) &addr, 5, "ERROR");
-    test(sock, test13, (struct sockaddr *) &addr, 4, "1/3\n");
+    test(sock, test13, (struct sockaddr *) &addr, 5, "1/3\r\n");
     test(sock, test14, (struct sockaddr *) &addr, 5, "1/3\r\n");
     test(sock, test15, (struct sockaddr *) &addr, 5, "ERROR");
-    test(sock, test16, (struct sockaddr *) &addr, 4, "1/1\n");
+    test(sock, test16, (struct sockaddr *) &addr, 5, "1/1\r\n");
     test(sock, test17, (struct sockaddr *) &addr, 5, "1/1\r\n");
     test(sock, test18, (struct sockaddr *) &addr, 9, "511/511\r\n");
 
@@ -449,29 +449,29 @@ int main(int argc, char const *argv[])
     test(sock, test26, (struct sockaddr *) &addr, 5, "ERROR");
     test(sock, test27, (struct sockaddr *) &addr, 5, "ERROR");
 
-    test(sock, test28, (struct sockaddr *) &addr, 4, "0/0\n");
+    test(sock, test28, (struct sockaddr *) &addr, 5, "0/0\r\n");
     test(sock, test29, (struct sockaddr *) &addr, 5, "ERROR");
     test(sock, test30, (struct sockaddr *) &addr, 5, "0/0\r\n");
 
-    test(sock, test31, (struct sockaddr *) &addr, 6, "ERROR\n");
+    test(sock, test31, (struct sockaddr *) &addr, 7, "ERROR\r\n");
     test(sock, test32, (struct sockaddr *) &addr, 7, "ERROR\r\n");
 
     test(sock, test33, (struct sockaddr *) &addr, 7, "ERROR\r\n");
-    test(sock, test34, (struct sockaddr *) &addr, 6, "ERROR\n");
+    test(sock, test34, (struct sockaddr *) &addr, 7, "ERROR\r\n");
 
     test(sock, test35, (struct sockaddr *) &addr, 5, "ERROR");
-    test(sock, test36, (struct sockaddr *) &addr, 6, "ERROR\n");
+    test(sock, test36, (struct sockaddr *) &addr, 7, "ERROR\r\n");
 
     test(sock, test37, (struct sockaddr *) &addr, 7, "ERROR\r\n");
     test(sock, test38, (struct sockaddr *) &addr, 3, "6/9");
 
-    test(sock, test39, (struct sockaddr *) &addr, 4, "6/9\n");
-    test(sock, test40, (struct sockaddr *) &addr, 6, "ERROR\n");
+    test(sock, test39, (struct sockaddr *) &addr, 5, "6/9\r\n");
+    test(sock, test40, (struct sockaddr *) &addr, 7, "ERROR\r\n");
     test(sock, test41, (struct sockaddr *) &addr, 7, "ERROR\r\n");
     test(sock, test42, (struct sockaddr *) &addr, 3, "0/7");
 
 
-    test(sock, test43, (struct sockaddr *) &addr, 4, "0/7\n");
+    test(sock, test43, (struct sockaddr *) &addr, 5, "0/7\r\n");
     test(sock, test44, (struct sockaddr *) &addr, 5, "0/7\r\n");
 
 
