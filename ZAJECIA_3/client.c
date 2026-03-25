@@ -348,6 +348,28 @@ int test44(unsigned char * buf){
     memcpy(buf, text, sizeof(text));
     return sizeof(text) - 1;
 }
+
+int test45(unsigned char * buf){
+    printf("\n---TEST 45:---(end with + \\r)\n");
+    unsigned char text[] = {"koala pilka zero nie ma tu palidromow\r"};
+    memcpy(buf, text, sizeof(text));
+    return sizeof(text) - 1;
+}
+
+int test46(unsigned char * buf){
+    printf("\n---TEST 46:---(only \\r)\n");
+    unsigned char text[] = {"\r"};
+    memcpy(buf, text, sizeof(text));
+    return sizeof(text) - 1;
+}
+
+int test47(unsigned char * buf){
+    printf("\n---TEST 47:---(input: \\r\\r\\n)\n");
+    unsigned char text[] = {"\r\r\n"};
+    memcpy(buf, text, sizeof(text));
+    return sizeof(text) - 1;
+}
+
 bool test(int sock, int (*do_test)(unsigned char *), struct sockaddr * addr,int exp_len, unsigned char * exp_result){
     unsigned char buf[2000];
     int size = do_test(buf);
@@ -473,7 +495,9 @@ int main(int argc, char const *argv[])
 
     test(sock, test43, (struct sockaddr *) &addr, 5, "0/7\r\n");
     test(sock, test44, (struct sockaddr *) &addr, 5, "0/7\r\n");
-
+    test(sock, test45, (struct sockaddr *) &addr, 5, "ERROR");
+    test(sock, test46, (struct sockaddr *) &addr, 5, "ERROR");
+    test(sock, test47, (struct sockaddr *) &addr, 7, "ERROR\r\n");
 
     rc = close(sock);
 

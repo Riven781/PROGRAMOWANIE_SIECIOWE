@@ -11,8 +11,8 @@
 
 /*
 Zalozenia przyjete:
-- jesli do serwera zostanie przeslane zapytanie zakonczone \n lub \r\n, serwer rowniez zwroci odpowiedz
-    zakonczona \n lub \r\n
+- jesli do serwera zostanie przeslane zapytanie zakonczone \n lub \r\n, serwer zwroci odpowiedz
+    zakonczona \r\n
 - klient nie przesyla zapytan zakonczonych '\0'
 - dla kazdego datagramu zawierajacego wiecej niz 1024 bajty zostanie zwrocony ERROR
 */
