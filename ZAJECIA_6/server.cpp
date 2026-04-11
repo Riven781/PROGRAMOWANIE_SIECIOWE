@@ -139,8 +139,6 @@ int get_state(int old_state, unsigned char symbol){
         return states[old_state][2];
     }
     else if (symbol == '\n'){
-        std::cout << "old_state" << old_state << std::endl;
-        std::cout << "enter" << std::endl;
         return states[old_state][3];
     }
     else if (symbol >= 0 && symbol <= 127){
@@ -210,7 +208,17 @@ int main(int argc, char const *argv[])
 
         for (int i = 0; i < num; ++i){
             int fd = events[i].data.fd;
-            printf("Fd %d\n", fd);
+
+            if (events[i].events & EPOLLHUP || events[i].events & EPOLLERR){
+                std::cout << "bye: " << fd << std::endl;
+                delete_client_state(fd);
+                rc = close(fd);
+                if (rc == -1){
+                    perror("close");
+                    return -1;
+                }
+                continue;
+            }
 
             if (!(events[i].events & EPOLLIN)){
                 continue;
@@ -227,9 +235,9 @@ int main(int argc, char const *argv[])
                 }
 
                 create_client_state(s);
-                printf("Client: %d\n", s);
+                printf("Client accepted: %d\n", s);
             } else {
-                printf("tak...\n");
+                printf("Client action: %d\n", fd);
                 ClientState * client_state = get_client_state(fd);
 
                 unsigned char buf[1024];

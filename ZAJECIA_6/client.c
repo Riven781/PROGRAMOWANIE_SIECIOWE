@@ -26,10 +26,12 @@ int	main(int argc, char **argv)
         return 1;
     }
 
-    const char message[] = "Ala ma kota\r\nAla ma kota\r\n";
+    const char message[] = "Ala ma kota\r\nAla ma kota\r\noko\r\nolo olo ol";
+
+    const char message2[] = "kk\0 olo olo ok ok ok olo\r\niooi olo Ala\r\n";
     
     int amount_data_to_send = sizeof(message) - 1;
-    while (amount_data_to_send > 0)
+    /*while (amount_data_to_send > 0)
     {
         int bytes_written = write(sock_fd, message, sizeof(message) - 1);
         if (bytes_written == -1){
@@ -38,20 +40,36 @@ int	main(int argc, char **argv)
         }
         amount_data_to_send -= bytes_written;
         printf("hoho\n");
-    }
+    }*/
+
+    int bytes_written = write(sock_fd, message, sizeof(message) - 1);
+
+    sleep(10);
+    bytes_written = write(sock_fd, message2, sizeof(message2) - 1);
+
     
     char buf[1024];
-    rc = read(sock_fd, buf, sizeof(buf));
-    printf("rc %d\n", rc);
-   
-    for (size_t i = 0; i < rc; i++)
+    int t = 0;
+    while (t < 5)
     {
-        printf("%c", buf[i]);
+        rc = read(sock_fd, buf, sizeof(buf));
+        printf("rc %d\n", rc);
+    
+        for (size_t i = 0; i < rc; i++)
+        {
+            printf("%c", buf[i]);
+        }
+        printf("\n");
+        sleep(3);
+        t += 1;
     }
-    printf("\n");
+    
+    sleep(10);
+    close(sock_fd);
+    sleep(5);
     
     
-    
+    //
 
     
 
