@@ -153,12 +153,15 @@ int main(int argc, char const *argv[])
 
             if (events[i].events & EPOLLHUP || events[i].events & EPOLLERR){ //EPOLLHUP - zamkniecie poloczenia, EPOLLERR - wystapil blad
                 //printf("bye: %d", client_ptr->fd);
-                remove_fd_from_epoll(fd, epoll_fd);
+                rc = remove_fd_from_epoll(fd, epoll_fd);
+                if (rc == -1){
+                    return 1;
+                }
                 free(client_ptr);
                 rc = close(fd);
                 if (rc == -1){
                     perror("close");
-                    return -1;
+                    return 1;
                 }
                 continue;
             }
@@ -188,12 +191,15 @@ int main(int argc, char const *argv[])
                     return 1;
                 }
                 else if (cnt == 0){
-                    remove_fd_from_epoll(fd, epoll_fd);
+                    rc = remove_fd_from_epoll(fd, epoll_fd);
+                    if (rc == -1){
+                        return 1;
+                    }
                     free(client_ptr);
                     rc = close(fd);
                     if (rc == -1){
                         perror("close");
-                        return -1;
+                        return 1;
                     }
                     break;
                 }
@@ -262,12 +268,15 @@ int main(int argc, char const *argv[])
                             client_ptr->is_error = true;
                         }
                         else if (state == 6){  //klient przyslal dane inne niz ASCII
-                            remove_fd_from_epoll(fd, epoll_fd);
+                            rc = remove_fd_from_epoll(fd, epoll_fd);
+                            if (rc == -1){
+                                return 1;
+                            }
                             free(client_ptr);
                             rc = close(fd);
                             if (rc == -1){
                                 perror("close");
-                                return -1;
+                                return 1;
                             }
                             break;
                         }
