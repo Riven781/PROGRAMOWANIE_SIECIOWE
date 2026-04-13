@@ -179,9 +179,6 @@ int main(int argc, char const *argv[])
 
                 //printf("Client accepted: %d\n", s);
             } else {
-                
-
-
                 unsigned char buf[1024];
 
                 int cnt = read(fd, buf, sizeof(buf));
