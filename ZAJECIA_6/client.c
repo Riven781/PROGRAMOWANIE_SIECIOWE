@@ -26,9 +26,23 @@ int	main(int argc, char **argv)
         return 1;
     }
 
-    const char message[] = "Ala ma kota\r\nAla ma kota\r\noko\r\nolo olo ol";
+    //const char message[] = "Ala ma kota\r\nAla ma kota\r\noko\r\nolo olo ol";
+    char message [2049];
+    for (int i = 0; i < 2047; ++ i){
+        
+        if (i % 2 == 1){
+            message[i] = ' ';
+        }
+        else{
+            message[i] = 'i';
+        }
+    }
+    message[2047] = '\r';
+    message[2048] = '\n';
 
-    const char message2[] = "kk\0 olo olo ok ok ok olo\r\niooi olo Ala\r\n";
+    char message2[] = "kk\0 olo olo ok ok ok olo\r\niooi olo. Ala\r\n\r\n \r\n";
+    
+  
     
     int amount_data_to_send = sizeof(message) - 1;
     /*while (amount_data_to_send > 0)
@@ -42,7 +56,7 @@ int	main(int argc, char **argv)
         printf("hoho\n");
     }*/
 
-    int bytes_written = write(sock_fd, message, sizeof(message) - 1);
+    int bytes_written = write(sock_fd, message, sizeof(message));
 
     sleep(10);
     bytes_written = write(sock_fd, message2, sizeof(message2) - 1);

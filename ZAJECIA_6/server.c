@@ -37,10 +37,18 @@ struct ClientState* create_client_state(int fd){
 }
 
 int add_fd_to_epoll(int fd, int epoll_fd){
-    struct epoll_event ev = {};
+    struct epoll_event ev = {0};
     ev.events = EPOLLIN;
-    ev.data.ptr = create_client_state(fd);
+    struct ClientState * client_state = create_client_state(fd);
+    if (client_state == NULL){
+        perror("malloc failed");
+        return -1;
+    }
+    ev.data.ptr = client_state;
     int rv = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &ev);
+    if (rv == -1){
+        perror("eppol_ctl(ADD)");
+    }
     return rv;
 }
 
@@ -91,21 +99,6 @@ bool is_palidrome(char * word, int len){
     return true;
 }
 
-int count_digits(int num){
-    int count = 0;
-    if (num == 0) return 1;
-
-    if (num < 0){
-        num = -num;
-    }
-
-    while (num > 0)
-    {
-        ++count;
-        num /= 10;
-    }  
-}
-
 
 int main(int argc, char const *argv[])
 {
@@ -140,7 +133,6 @@ int main(int argc, char const *argv[])
     }
 
     if (add_fd_to_epoll(srv_sock, epoll_fd) == -1){
-        perror("epoll_ctl(ADD)");
         return 1;
     }
     int rc;
@@ -159,7 +151,7 @@ int main(int argc, char const *argv[])
             struct ClientState * client_ptr = events[i].data.ptr;
             int fd = client_ptr->fd;
 
-            if (events[i].events & EPOLLHUP || events[i].events & EPOLLERR){
+            if (events[i].events & EPOLLHUP || events[i].events & EPOLLERR){ //EPOLLHUP - zamkniecie poloczenia, EPOLLERR - wystapil blad
                 //printf("bye: %d", client_ptr->fd);
                 remove_fd_from_epoll(fd, epoll_fd);
                 free(client_ptr);
@@ -185,15 +177,15 @@ int main(int argc, char const *argv[])
                     return 1;
                 }
 
-                printf("Client accepted: %d\n", s);
+                //printf("Client accepted: %d\n", s);
             } else {
-                printf("Client action: %d\n", fd);
+                
 
 
                 unsigned char buf[1024];
 
                 int cnt = read(fd, buf, sizeof(buf));
-
+                //printf("Client action: %d cnt: %d\n", fd, cnt);
                 if (cnt == -1){
                     perror("read");
                     return 1;
@@ -245,7 +237,7 @@ int main(int argc, char const *argv[])
                                 client_ptr->is_error = true;
                             }
 
-                            char msg[10]; //max to 511/511\r\n
+                            char msg[12]; //max to 1024/1024\r\n
                             int msg_size = 0;
 
                             if (client_ptr->is_error){
