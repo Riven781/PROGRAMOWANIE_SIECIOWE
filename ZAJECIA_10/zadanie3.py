@@ -8,6 +8,9 @@ def fetch_name_and_bands(id):
 
     try:
         with urllib.request.urlopen(req, timeout=3) as r:
+            headers = dict(r.getheaders())
+            if 'application/json' not in headers.get('Content-Type', ''):
+                raise ValueError('Non-JSON data')
             raw_data = r.read().decode('utf-8')
             json_data = json.loads(raw_data)
     except Exception as e:
