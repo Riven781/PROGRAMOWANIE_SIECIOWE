@@ -1,7 +1,7 @@
 import urllib.request
 import sys
 import json
-
+#python3 zadanie3.py 516820 532854 702387
 def fetch_name_and_bands(id):
     url = f'https://api.discogs.com/artists/{id}'
     headers = {'User-Agent' : 'shared_bands_app (student - project)'}
@@ -39,7 +39,8 @@ def print_band_artists(band_artists_dict):
         print(f'{band} : {band_artists_dict[band]}')
 
 if __name__ == '__main__':
-    if len(sys.argv) == 1:
+    if len(sys.argv) < 3:
+        print('Minimum 2 artists needed')
         sys.exit(0)
     artists_id = sys.argv[1:]
     artist_bands = dict([fetch_name_and_bands(artist_id) for artist_id in artists_id])
