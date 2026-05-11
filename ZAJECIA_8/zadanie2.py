@@ -12,7 +12,8 @@ if __name__ == '__main__':
 
         headers_dict = dict(r.getheaders())
 
-        if headers_dict['Content-Type'] != 'text/html':
+        content_type = headers_dict.get('Content-Type', '')
+        if 'text/html' not in content_type:
             sys.exit(1)
 
         if r.read().decode().find('Institute of Theoretical Physics') == -1:
