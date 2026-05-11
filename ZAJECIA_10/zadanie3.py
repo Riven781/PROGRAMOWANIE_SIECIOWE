@@ -4,12 +4,13 @@ import json
 
 def fetch_name_and_bands(id):
     url = f'https://api.discogs.com/artists/{id}'
-    req = urllib.request.Request(url)
+    headers = {'User-Agent' : 'shared_bands_app (student - project)'}
+    req = urllib.request.Request(url, headers=headers)
 
     try:
         with urllib.request.urlopen(req, timeout=3) as r:
-            headers = dict(r.getheaders())
-            if 'application/json' not in headers.get('Content-Type', ''):
+            headers_dict = dict(r.getheaders())
+            if 'application/json' not in headers_dict.get('Content-Type', ''):
                 raise ValueError('Non-JSON data')
             raw_data = r.read().decode('utf-8')
             json_data = json.loads(raw_data)
